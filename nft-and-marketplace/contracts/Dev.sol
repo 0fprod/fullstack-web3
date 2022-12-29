@@ -11,4 +11,7 @@ contract Dev is ERC721 {
     constructor(uint256 fee) ERC721("Developer", "Dev") {
         s_mintFee = fee;
     }
+    function getMintFee() public view returns (uint256) {
+        return s_mintFee;
+    }
 }
