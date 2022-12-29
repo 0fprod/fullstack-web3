@@ -11,9 +11,7 @@
     "test": "hardhat test",
     "coverage": "hardhat coverage",
     "deploy:goerli": "hardhat deploy --network goerli",
-    "deploy:local": "hardhat deploy --network hardhat --tags all",
-    "node": "hardhat node",
-    "local": "hardhat console --network localhost"
+    "deploy:local": "hardhat deploy --network hardhat --tags all"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.4",
