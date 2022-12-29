@@ -35,6 +35,11 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
 
       expect(mintFee.toString()).to.eq(definedMintPrice.toString());
     });
+
+    it("are limited only to 10", async () => {
+      const getMaxSuppply = await devNftContract.getMaxSuppply();
+      expect(getMaxSuppply.toString()).to.eq("10");
+    });
   });
 
   const getBlockchainsActiveAccounts = async (): Promise<
