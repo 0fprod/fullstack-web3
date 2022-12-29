@@ -29,6 +29,11 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
       );
     });
 
+    it("initializes with correct name and symbol", async () => {
+      expect(await devNftContract.name()).to.eq("Developer");
+      expect(await devNftContract.symbol()).to.eq("DEV");
+    });
+
     it("sets a price for minting", async () => {
       const definedMintPrice = networkConfigHelper[HARDHAT_CHAINID].mintPrice;
       const mintFee = await devNftContract.getMintFee();
@@ -76,7 +81,9 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
       const totalMinted = await devNftContract.getTokenCounter();
 
       expect(firstTokenMited.toString()).to.eq("0");
+      expect(await devNftContract.ownerOf("0")).to.eq(accounts[0].address);
       expect(secondTokenMinted.toString()).to.eq("1");
+      expect(await devNftContract.ownerOf("1")).to.eq(accounts[1].address);
       expect(totalMinted.toString()).to.eq("2");
     });
   });

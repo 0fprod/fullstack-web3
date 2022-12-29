@@ -11,7 +11,7 @@ contract Dev is ERC721 {
     uint256 private s_mintFee;
     mapping(address => uint8) private s_tokenMintedBy;
 
-    constructor(uint256 fee) ERC721("Developer", "Dev") {
+    constructor(uint256 fee) ERC721("Developer", "DEV") {
         s_tokenCounter = 0;
         s_mintFee = fee;
     }
