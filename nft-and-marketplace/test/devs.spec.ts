@@ -60,6 +60,25 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
         "Dev__AllTokensMinted"
       );
     });
+
+    it("stores the minter address of the tokenId", async () => {
+      await devNftContract.mint();
+      // connect and mint with another account
+      devNftContract = devNftContract.connect(accounts[1]);
+      await devNftContract.mint();
+
+      const firstTokenMited = await devNftContract.getTokenByMinterAddress(
+        accounts[0].address
+      );
+      const secondTokenMinted = await devNftContract.getTokenByMinterAddress(
+        accounts[1].address
+      );
+      const totalMinted = await devNftContract.getTokenCounter();
+
+      expect(firstTokenMited.toString()).to.eq("0");
+      expect(secondTokenMinted.toString()).to.eq("1");
+      expect(totalMinted.toString()).to.eq("2");
+    });
   });
 
   const getBlockchainsActiveAccounts = async (): Promise<

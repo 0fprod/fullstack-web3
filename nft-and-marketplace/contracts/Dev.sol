@@ -9,6 +9,7 @@ contract Dev is ERC721 {
     uint8 private immutable MAX_TOKENS = 10;
     uint8 private s_tokenCounter;
     uint256 private s_mintFee;
+    mapping(address => uint8) private s_tokenMintedBy;
 
     constructor(uint256 fee) ERC721("Developer", "Dev") {
         s_tokenCounter = 0;
@@ -22,12 +23,20 @@ contract Dev is ERC721 {
 
         _safeMint(msg.sender, s_tokenCounter);
 
+        s_tokenMintedBy[msg.sender] = s_tokenCounter;
         s_tokenCounter++;
     }
 
     function getTokenCounter() public view returns (uint8) {
         return s_tokenCounter;
     }
+
+    function getTokenByMinterAddress(
+        address minterAddress
+    ) public view returns (uint8) {
+        return s_tokenMintedBy[minterAddress];
+    }
+
     function getMintFee() public view returns (uint256) {
         return s_mintFee;
     }
