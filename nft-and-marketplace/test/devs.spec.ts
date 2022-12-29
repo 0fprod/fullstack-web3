@@ -47,6 +47,19 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
       expect(numberOfMintedTokens.toString()).to.eq("1");
     });
 
+    it("reverts the tx when all the tokens are minted", async () => {
+      // mint 10 times
+      const mintingPromises = Array.from({ length: 10 }).map((_) =>
+        devNftContract.mint()
+      );
+
+      await Promise.all(mintingPromises);
+
+      await expect(devNftContract.mint()).to.revertedWithCustomError(
+        devNftContract,
+        "Dev__AllTokensMinted"
+      );
+    });
   });
 
   const getBlockchainsActiveAccounts = async (): Promise<

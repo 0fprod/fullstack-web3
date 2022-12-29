@@ -11,10 +11,14 @@ contract Dev is ERC721 {
     uint256 private s_mintFee;
 
     constructor(uint256 fee) ERC721("Developer", "Dev") {
+        s_tokenCounter = 0;
         s_mintFee = fee;
     }
 
     function mint() public {
+        if (s_tokenCounter >= MAX_TOKENS) {
+            revert Dev__AllTokensMinted();
+        }
 
         _safeMint(msg.sender, s_tokenCounter);
 
