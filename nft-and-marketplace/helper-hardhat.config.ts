@@ -4,6 +4,7 @@ import { ethers } from "hardhat";
 interface ContractParams {
   name: string;
   mintPrice: BigNumber;
+  nftMetadataUris: string[];
 }
 
 interface ConfigHelper {
@@ -14,10 +15,12 @@ export const networkConfigHelper: ConfigHelper = {
   5: {
     name: "goerli",
     mintPrice: ethers.utils.parseEther("0.1"),
+    nftMetadataUris: [],
   },
   31337: {
     name: "hardhat",
     mintPrice: ethers.utils.parseEther("0.1"),
+    nftMetadataUris: ["token-uri"],
   },
 };
 

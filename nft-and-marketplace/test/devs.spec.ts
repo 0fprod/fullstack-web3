@@ -30,9 +30,10 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
       );
     });
 
-    it("initializes with correct name and symbol", async () => {
+    it("initializes with correct name, symbol and token uris", async () => {
       expect(await devNftContract.name()).to.eq("Developer");
       expect(await devNftContract.symbol()).to.eq("DEV");
+      expect(await devNftContract.getTokenUri(0)).to.eq("token-uri");
     });
 
     it("sets a price for minting", async () => {

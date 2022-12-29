@@ -14,13 +14,13 @@ const deploy = async ({
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId || HARDHAT_CHAINID;
-  const mintPrice = networkConfigHelper[HARDHAT_CHAINID].mintPrice;
+  const { mintPrice, nftMetadataUris } = networkConfigHelper[HARDHAT_CHAINID];
 
   log("#########################");
   log(`# Deploying NFT Contract to: ${chainId} ...`);
   const nftContract = await deploy("Dev", {
     from: deployer,
-    args: [mintPrice],
+    args: [mintPrice, nftMetadataUris],
     waitConfirmations: 1,
   });
   log("# Devs contract deployed at address:", nftContract.address);
