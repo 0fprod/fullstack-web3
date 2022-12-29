@@ -40,6 +40,13 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
       const getMaxSuppply = await devNftContract.getMaxSuppply();
       expect(getMaxSuppply.toString()).to.eq("10");
     });
+
+    it("allow users to mint", async () => {
+      await expect(devNftContract.mint()).to.emit(devNftContract, "Transfer");
+      const numberOfMintedTokens = await devNftContract.getTokenCounter();
+      expect(numberOfMintedTokens.toString()).to.eq("1");
+    });
+
   });
 
   const getBlockchainsActiveAccounts = async (): Promise<
