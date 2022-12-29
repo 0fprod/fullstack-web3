@@ -12,6 +12,7 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
   describe("Devs NFTs", () => {
     let devNftContract: Dev;
     let accounts: Array<SignerWithAddress>;
+    const oneEther = ethers.utils.parseEther("1");
 
     before(async () => {
       accounts = await getBlockchainsActiveAccounts();
@@ -47,7 +48,10 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
     });
 
     it("allow users to mint", async () => {
-      await expect(devNftContract.mint()).to.emit(devNftContract, "Transfer");
+      await expect(devNftContract.mint({ value: oneEther })).to.emit(
+        devNftContract,
+        "Transfer"
+      );
       const numberOfMintedTokens = await devNftContract.getTokenCounter();
       expect(numberOfMintedTokens.toString()).to.eq("1");
     });
@@ -55,22 +59,28 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
     it("reverts the tx when all the tokens are minted", async () => {
       // mint 10 times
       const mintingPromises = Array.from({ length: 10 }).map((_) =>
-        devNftContract.mint()
+        devNftContract.mint({ value: oneEther })
       );
 
       await Promise.all(mintingPromises);
 
-      await expect(devNftContract.mint()).to.revertedWithCustomError(
-        devNftContract,
-        "Dev__AllTokensMinted"
-      );
+      await expect(
+        devNftContract.mint({ value: oneEther })
+      ).to.revertedWithCustomError(devNftContract, "Dev__AllTokensMinted");
+    });
+
+    it("reverts the tx when the minting fee is lower than MIN_FEE", async () => {
+      const invalidFee = ethers.utils.parseEther("0.0001");
+      await expect(
+        devNftContract.mint({ value: invalidFee })
+      ).to.revertedWithCustomError(devNftContract, "Dev__NotEnoughETHToMint");
     });
 
     it("stores the minter address of the tokenId", async () => {
-      await devNftContract.mint();
+      await devNftContract.mint({ value: oneEther });
       // connect and mint with another account
       devNftContract = devNftContract.connect(accounts[1]);
-      await devNftContract.mint();
+      await devNftContract.mint({ value: oneEther });
 
       const firstTokenMited = await devNftContract.getTokenByMinterAddress(
         accounts[0].address

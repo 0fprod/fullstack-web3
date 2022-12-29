@@ -16,9 +16,13 @@ contract Dev is ERC721 {
         s_mintFee = fee;
     }
 
-    function mint() public {
+    function mint() public payable {
         if (s_tokenCounter >= MAX_TOKENS) {
             revert Dev__AllTokensMinted();
+        }
+
+        if (msg.value < s_mintFee) {
+            revert Dev__NotEnoughETHToMint();
         }
 
         _safeMint(msg.sender, s_tokenCounter);
