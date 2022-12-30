@@ -55,10 +55,13 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
 
     it("allow users to mint", async () => {
       await new Promise<void>(async (resolve, reject) => {
-        devNftContract.once("RandomDevPicked", async () => {
+        devNftContract.once("NftMinted", async (devType: number) => {
           try {
             const numberOfMintedTokens = await devNftContract.getTokenCounter();
+            const numebrOfDevTypes = await devNftContract.getNumberOfDevTypes();
+
             expect(numberOfMintedTokens.toString()).to.eq("1");
+            expect(devType).to.be.lte(numebrOfDevTypes);
             resolve();
           } catch (err) {
             reject(err);

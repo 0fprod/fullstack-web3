@@ -10,7 +10,11 @@ error Dev__AllTokensMinted();
 error Dev__NotEnoughETHToMint();
 
 contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
-contract Dev is ERC721URIStorage {
+    enum DevType {
+        Junior,
+        Medior,
+        Senior
+    }
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
 
     uint8 private immutable MAX_TOKENS = 10;
@@ -19,10 +23,10 @@ contract Dev is ERC721URIStorage {
     uint256 private s_mintFee;
     mapping(address => uint8) private s_tokenMintedBy;
     mapping(uint256 => address) private s_requestIdToCallerAddres;
-    string[1] private s_tokenURIs;
+    string[] private s_tokenURIs;
 
     event NftRequested(uint256 indexed requestId);
-    event RandomDevPicked();
+    event NftMinted(DevType dev);
 
     constructor(
         uint256 fee,
@@ -58,20 +62,21 @@ contract Dev is ERC721URIStorage {
         emit NftRequested(requestId);
     }
 
+    // This is the callback called by VRF when the request is completed
+    // with the id and the random number received based on wordSize
     function fulfillRandomWords(
         uint256 requestId,
         uint256[] memory randomWords
     ) internal override {
-        // This is the callback called by VRF when the request is completed
-        // with the id and the random number received based on wordSize
         address tokenMinterAddress = s_requestIdToCallerAddres[requestId];
         s_tokenMintedBy[tokenMinterAddress] = s_tokenCounter;
         s_tokenCounter++;
-
+        uint256 randomBetween0and3 = randomWords[0] % s_tokenURIs.length;
+        DevType dev = DevType(randomBetween0and3);
         _safeMint(tokenMinterAddress, s_tokenCounter);
-        _setTokenURI(s_tokenCounter, s_tokenURIs[0]);
+        _setTokenURI(s_tokenCounter, s_tokenURIs[randomBetween0and3]);
 
-        emit RandomDevPicked();
+        emit NftMinted(dev);
     }
 
     function getTokenCounter() public view returns (uint8) {
@@ -94,5 +99,9 @@ contract Dev is ERC721URIStorage {
 
     function getTokenUri(uint8 index) public view returns (string memory) {
         return s_tokenURIs[index];
+    }
+
+    function getNumberOfDevTypes() public view returns (uint256) {
+        return s_tokenURIs.length;
     }
 }
