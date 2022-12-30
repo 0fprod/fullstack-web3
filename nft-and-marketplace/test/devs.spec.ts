@@ -5,28 +5,33 @@ import {
   isDevelopmentChain,
   networkConfigHelper,
 } from "../helper-hardhat.config";
-import { Dev } from "../typechain-types";
+import { Dev, VRFCoordinatorV2Mock } from "../typechain-types";
 import { HARDHAT_CHAINID } from "../utils/constants";
 
 if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
   describe("Devs NFTs", () => {
     let devNftContract: Dev;
+    let vrfCoordinatorV2Contract: VRFCoordinatorV2Mock;
     let accounts: Array<SignerWithAddress>;
     const oneEther = ethers.utils.parseEther("1");
 
     before(async () => {
-      accounts = await getBlockchainsActiveAccounts();
+      accounts = await ethers.getSigners();
     });
 
     beforeEach(async () => {
       // Run deployments by tag
       await deployments.fixture("nft");
       // Find deployed contracts by name
-      const devNftDeployment = await deployments.get("Dev");
+      const { address: devNftAddress } = await deployments.get("Dev");
+      const { address: vrfCoordinatorMockAddress } = await deployments.get(
+        "VRFCoordinatorV2Mock"
+      );
       // Get contract instance by name & deployment address
-      devNftContract = await ethers.getContractAt(
-        "Dev",
-        devNftDeployment.address
+      devNftContract = await ethers.getContractAt("Dev", devNftAddress);
+      vrfCoordinatorV2Contract = await ethers.getContractAt(
+        "VRFCoordinatorV2Mock",
+        vrfCoordinatorMockAddress
       );
     });
 
@@ -49,20 +54,27 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
     });
 
     it("allow users to mint", async () => {
-      await expect(devNftContract.mint({ value: oneEther })).to.emit(
-        devNftContract,
-        "Transfer"
-      );
-      const numberOfMintedTokens = await devNftContract.getTokenCounter();
-      expect(numberOfMintedTokens.toString()).to.eq("1");
+      await new Promise<void>(async (resolve, reject) => {
+        devNftContract.once("RandomDevPicked", async () => {
+          try {
+            const numberOfMintedTokens = await devNftContract.getTokenCounter();
+            expect(numberOfMintedTokens.toString()).to.eq("1");
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
+        });
+        // This fires requestRandomWords and returns the requestId
+        // We must emit the requestId and pass it to fullfillRandomWords
+        await mintAndFullfillRandomWords(devNftContract);
+      });
     });
 
     it("reverts the tx when all the tokens are minted", async () => {
       // mint 10 times
       const mintingPromises = Array.from({ length: 10 }).map((_) =>
-        devNftContract.mint({ value: oneEther })
+        mintAndFullfillRandomWords(devNftContract)
       );
-
       await Promise.all(mintingPromises);
 
       await expect(
@@ -78,10 +90,10 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
     });
 
     it("stores the minter address of the tokenId", async () => {
-      await devNftContract.mint({ value: oneEther });
+      await mintAndFullfillRandomWords(devNftContract);
       // connect and mint with another account
       devNftContract = devNftContract.connect(accounts[1]);
-      await devNftContract.mint({ value: oneEther });
+      await mintAndFullfillRandomWords(devNftContract);
 
       const firstTokenMited = await devNftContract.getTokenByMinterAddress(
         accounts[0].address
@@ -92,16 +104,18 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
       const totalMinted = await devNftContract.getTokenCounter();
 
       expect(firstTokenMited.toString()).to.eq("0");
-      expect(await devNftContract.ownerOf("0")).to.eq(accounts[0].address);
       expect(secondTokenMinted.toString()).to.eq("1");
-      expect(await devNftContract.ownerOf("1")).to.eq(accounts[1].address);
       expect(totalMinted.toString()).to.eq("2");
     });
-  });
 
-  const getBlockchainsActiveAccounts = async (): Promise<
-    Array<SignerWithAddress>
-  > => {
-    return await ethers.getSigners();
-  };
+    async function mintAndFullfillRandomWords(devNftContract: Dev) {
+      const tx = await devNftContract.mint({ value: oneEther });
+      const txReceipt = await tx.wait(1);
+      const requestId = txReceipt.events![1].args![0];
+      await vrfCoordinatorV2Contract.fulfillRandomWords(
+        requestId,
+        devNftContract.address
+      );
+    }
+  });
 }

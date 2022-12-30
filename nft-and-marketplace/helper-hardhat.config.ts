@@ -5,6 +5,8 @@ interface ContractParams {
   name: string;
   mintPrice: BigNumber;
   nftMetadataUris: string[];
+  vrfCoordinatorAddress: string;
+  vrfSubscriptionId: string;
 }
 
 interface ConfigHelper {
@@ -16,11 +18,15 @@ export const networkConfigHelper: ConfigHelper = {
     name: "goerli",
     mintPrice: ethers.utils.parseEther("0.1"),
     nftMetadataUris: [],
+    vrfCoordinatorAddress: "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D",
+    vrfSubscriptionId: "0",
   },
   31337: {
     name: "hardhat",
     mintPrice: ethers.utils.parseEther("0.1"),
     nftMetadataUris: ["token-uri"],
+    vrfCoordinatorAddress: "", // Overritten in deploy
+    vrfSubscriptionId: "", // Overritten in deploy
   },
 };
 
