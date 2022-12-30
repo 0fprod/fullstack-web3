@@ -11,8 +11,14 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, log } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
   const chainId = network.config.chainId || HARDHAT_CHAINID;
-  let { mintPrice, nftMetadataUris, vrfCoordinatorAddress, vrfSubscriptionId } =
-    networkConfigHelper[HARDHAT_CHAINID];
+  let {
+    mintPrice,
+    nftMetadataUris,
+    vrfCoordinatorAddress,
+    vrfSubscriptionId,
+    vrfGasLane,
+    vrfCallbackLimit,
+  } = networkConfigHelper[HARDHAT_CHAINID];
 
   if (isDevelopmentChain(chainId)) {
     let { address, subscriptionId } = await deployVRFCoordinatorMock(hre);
@@ -29,6 +35,8 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
       nftMetadataUris,
       vrfCoordinatorAddress,
       vrfSubscriptionId,
+      vrfCallbackLimit,
+      vrfGasLane,
     ],
     waitConfirmations: 1,
   });

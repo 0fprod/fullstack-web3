@@ -16,11 +16,14 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
         Senior
     }
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
-
     uint8 private immutable MAX_TOKENS = 10;
+    uint8 private constant NUMBER_OF_RANDOM_WORDS = 1;
+    uint8 private constant REQUEST_CONFIRMATIONS = 1;
     uint8 private s_tokenCounter;
+    uint32 private immutable i_callbackGasLimit;
     uint64 private immutable i_subscriptionId;
     uint256 private s_mintFee;
+    bytes32 private immutable i_gasLane;
     mapping(address => uint8) private s_tokenMintedBy;
     mapping(uint256 => address) private s_requestIdToCallerAddres;
     string[] private s_tokenURIs;
@@ -32,13 +35,17 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
         uint256 fee,
         string[1] memory tokenUris,
         address vrfCoordinatorV2,
-        uint64 subscriptionId
+        uint64 subscriptionId,
+        uint32 callbackGasLimit,
+        bytes32 gasLane
     ) ERC721("Developer", "DEV") VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         s_tokenCounter = 0;
         s_mintFee = fee;
         s_tokenURIs = tokenUris;
         i_subscriptionId = subscriptionId;
+        i_callbackGasLimit = callbackGasLimit;
+        i_gasLane = gasLane;
     }
 
     function mint() public payable {
@@ -51,11 +58,11 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
         }
 
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
-            0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc, // i_gasLane,
-            i_subscriptionId, // i_subscriptionId,
-            1, // REQUEST_CONFIRMATIONS,
-            2000000, // i_callbackGasLimit,
-            1 //NUMBER_OF_RANDOM_WORDS
+            i_gasLane,
+            i_subscriptionId,
+            REQUEST_CONFIRMATIONS,
+            i_callbackGasLimit,
+            NUMBER_OF_RANDOM_WORDS
         );
         s_requestIdToCallerAddres[requestId] = msg.sender;
 
