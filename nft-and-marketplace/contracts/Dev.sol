@@ -24,7 +24,7 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
     uint64 private immutable i_subscriptionId;
     uint256 private s_mintFee;
     bytes32 private immutable i_gasLane;
-    mapping(address => uint8) private s_tokenMintedBy;
+    mapping(uint256 => address) private s_tokenIdMinter;
     mapping(uint256 => address) private s_requestIdToCallerAddres;
     string[] private s_tokenURIs;
 
@@ -48,7 +48,31 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
         i_gasLane = gasLane;
     }
 
-    function mint() public payable {
+    function transferFrom(
+        address from,
+        address to,
+        uint tokenId
+    ) public override {
+        require(from != address(0x0), "invalid from address");
+        require(to != address(0x0), "invalid to address");
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "msgSender is not the owner of the token"
+        );
+
+        address minter = s_tokenIdMinter[uint8(tokenId)];
+        rewardMinter(minter);
+
+        _transfer(from, to, tokenId);
+    }
+
+    function rewardMinter(address minter) internal {
+        address payable receiver = payable(minter);
+        (bool sent, ) = receiver.call{value: 0.0025 ether}("");
+        require(sent, "Failed to send Ether");
+    }
+
+    function requestNft() public payable {
         if (s_tokenCounter >= MAX_TOKENS) {
             revert Dev__AllTokensMinted();
         }
@@ -76,24 +100,21 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
         uint256[] memory randomWords
     ) internal override {
         address tokenMinterAddress = s_requestIdToCallerAddres[requestId];
-        s_tokenMintedBy[tokenMinterAddress] = s_tokenCounter;
-        s_tokenCounter++;
+        s_tokenIdMinter[s_tokenCounter] = tokenMinterAddress;
         uint256 randomBetween0and3 = randomWords[0] % s_tokenURIs.length;
         DevType dev = DevType(randomBetween0and3);
         _safeMint(tokenMinterAddress, s_tokenCounter);
         _setTokenURI(s_tokenCounter, s_tokenURIs[randomBetween0and3]);
-
         emit NftMinted(dev);
+        s_tokenCounter++;
     }
 
     function getTokenCounter() public view returns (uint8) {
         return s_tokenCounter;
     }
 
-    function getTokenByMinterAddress(
-        address minterAddress
-    ) public view returns (uint8) {
-        return s_tokenMintedBy[minterAddress];
+    function getTokenMinterById(uint8 tokenId) public view returns (address) {
+        return s_tokenIdMinter[tokenId];
     }
 
     function getMintFee() public view returns (uint256) {
