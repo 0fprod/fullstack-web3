@@ -1,0 +1,9 @@
+{
+  "name": "Senior",
+  "description": "loremImpsum.randomize(93,'words')",
+  "image": "ipfs://bafybeicbewerrelcp6raus6of4mdibyj3jbx7fyvtd7jl375srlyuwc2vm/",
+  "attributes": [
+    { "skill": "coffee-addiction", "level": 98 },
+    { "skill": "javascript", "level": 100 }
+  ]
+}

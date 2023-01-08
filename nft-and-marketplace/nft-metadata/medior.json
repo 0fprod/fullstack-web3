@@ -1,0 +1,10 @@
+{
+  "name": "Medior",
+  "description": "Hello this is a description",
+  "image": "ipfs://bafybeiba2jfdfts7in6vntvtu4lonyclcoziiscqrgfinorgyctiigzwju/",
+  "attributes": [
+    { "skill": "coffee-addiction", "level": 38 },
+    { "skill": "alcohol-immune", "level": 100 },
+    { "skill": "chewing-gum", "level": 76 }
+  ]
+}

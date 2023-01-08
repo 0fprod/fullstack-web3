@@ -1,0 +1,12 @@
+{
+  "name": "Junior",
+  "description": "Im a highly motivated and talented engineer with a strong passion for problem-solving and technology. I have a Bachelors degree in Engineering and has completed several internships at reputable companies, gaining valuable hands-on experience in the field. Im now seeking a full-time position at a company where she can continue to grow and learn as an engineer, while also making a positive impact on the team and organization.",
+  "image": "ipfs://QmUdwF2Lxg5gFPMMshfBEdmFcydSaJkBpPLitJJjXKWH3j",
+  "attributes": [
+    { "skill": "typescript", "level": 198 },
+    { "skill": "javascript", "level": 200 },
+    { "skill": "fullstack", "level": 38 },
+    { "skill": "photoshop", "level": 500 },
+    { "skill": "coffee-addiction", "level": 1 }
+  ]
+}
