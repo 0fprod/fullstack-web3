@@ -4,7 +4,6 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-import "hardhat/console.sol";
 
 error Dev__AllTokensMinted();
 error Dev__NotEnoughETHToMint();
@@ -33,7 +32,7 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
 
     constructor(
         uint256 fee,
-        string[1] memory tokenUris,
+        string[] memory tokenUris,
         address vrfCoordinatorV2,
         uint64 subscriptionId,
         uint32 callbackGasLimit,
