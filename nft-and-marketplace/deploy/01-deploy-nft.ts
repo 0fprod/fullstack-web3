@@ -1,11 +1,8 @@
-import { ethers, network } from "hardhat";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import {
-  isDevelopmentChain,
-  networkConfigHelper,
-} from "../helper-hardhat.config";
-import { HARDHAT_CHAINID } from "../utils/constants";
-import { verify } from "../utils/verify";
+import { ethers, network } from 'hardhat';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { isDevelopmentChain, networkConfigHelper } from '../helper-hardhat.config';
+import { HARDHAT_CHAINID } from '../utils/constants';
+import { verify } from '../utils/verify';
 
 const deploy = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, log } = hre.deployments;
@@ -26,9 +23,9 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
     vrfSubscriptionId = subscriptionId;
   }
 
-  log("#########################");
+  log('#########################');
   log(`# Deploying NFT Contract to: ${chainId} ...`);
-  const nftContract = await deploy("Dev", {
+  const nftContract = await deploy('Dev', {
     from: deployer,
     args: [
       mintPrice,
@@ -40,22 +37,19 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
     ],
     waitConfirmations: 1,
   });
-  log("# Devs contract deployed at address:", nftContract.address);
-  log("#########################");
+  log('# Devs contract deployed at address:', nftContract.address);
+  log('#########################');
 
   if (isDevelopmentChain(chainId)) {
-    log("#########################");
-    log("# Adding consumer to VRFMock...");
+    log('#########################');
+    log('# Adding consumer to VRFMock...');
     const vrfCoordinatorV2Mock = await ethers.getContractAt(
-      "VRFCoordinatorV2Mock",
+      'VRFCoordinatorV2Mock',
       vrfCoordinatorAddress
     );
-    await vrfCoordinatorV2Mock.addConsumer(
-      vrfSubscriptionId,
-      nftContract.address
-    );
-    log("# Done.");
-    log("#########################");
+    await vrfCoordinatorV2Mock.addConsumer(vrfSubscriptionId, nftContract.address);
+    log('# Done.');
+    log('#########################');
   }
 
   if (!isDevelopmentChain(chainId)) {
@@ -75,35 +69,29 @@ const deployVRFCoordinatorMock = async (
 ): Promise<{ address: string; subscriptionId: string }> => {
   const { deploy, log } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
-  const baseFee = ethers.utils.parseEther("0.25"); // 0.25Link is premium https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#goerli-testnet
+  const baseFee = ethers.utils.parseEther('0.25'); // 0.25Link is premium https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#goerli-testnet
   const gasPriceLink = 1e9; // based on the gas price of the chain. Its like LINKs per GAS unit
 
-  log("#########################");
+  log('#########################');
   log(`# Deploying VRFCoordinatorMock Contract...`);
-  const { address } = await deploy("VRFCoordinatorV2Mock", {
+  const { address } = await deploy('VRFCoordinatorV2Mock', {
     from: deployer,
     args: [baseFee, gasPriceLink],
     waitConfirmations: 1,
   });
-  log("# Mock deployed to: ", address);
-  log("# Creating VRF subscription...");
-  const contractInstance = await ethers.getContractAt(
-    "VRFCoordinatorV2Mock",
-    address
-  );
+  log('# Mock deployed to: ', address);
+  log('# Creating VRF subscription...');
+  const contractInstance = await ethers.getContractAt('VRFCoordinatorV2Mock', address);
   const txResponse = await contractInstance.createSubscription();
   const txReceipt = await txResponse.wait(1);
   const subscriptionId = txReceipt.events![0].args!.subId; // @chainlink/contracts/src/v0.8/mocks/VRFCoordinatorV2Mock.sol#179
-  log("# Funding VRF subscription...");
-  await contractInstance.fundSubscription(
-    subscriptionId,
-    ethers.utils.parseEther("300")
-  );
-  log("# Mock deployment & funding completed.");
-  log("#########################");
+  log('# Funding VRF subscription...');
+  await contractInstance.fundSubscription(subscriptionId, ethers.utils.parseEther('300'));
+  log('# Mock deployment & funding completed.');
+  log('#########################');
 
   return { address, subscriptionId };
 };
 
 export default deploy;
-deploy.tags = ["all", "nft"];
+deploy.tags = ['all', 'nft'];
