@@ -18,7 +18,7 @@ interface ConfigHelper {
 export const networkConfigHelper: ConfigHelper = {
   5: {
     name: 'goerli',
-    mintPrice: ethers.utils.parseEther('0.1'),
+    mintPrice: ethers.utils.parseEther('0.01'),
     nftMetadataUris: [
       'ipfs://QmPpew49diwW6hLhPXiWsWLwxSRJJBp8KRp6A1eYucvLDp', // Junior
       'ipfs://bafybeieefb7gwrxc5ijq3mf6bm6odkwcdgvbjrfalssije7ow4okf4q2g4/', // Medior
