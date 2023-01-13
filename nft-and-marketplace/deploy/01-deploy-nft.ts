@@ -18,7 +18,7 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
     vrfSubscriptionId,
     vrfGasLane,
     vrfCallbackLimit,
-  } = networkConfigHelper[HARDHAT_CHAINID];
+  } = networkConfigHelper[chainId];
 
   if (isDevelopmentChain(chainId)) {
     let { address, subscriptionId } = await deployVRFCoordinatorMock(hre);
