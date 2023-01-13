@@ -59,7 +59,14 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
   }
 
   if (!isDevelopmentChain(chainId)) {
-    await verify("", []);
+    await verify(nftContract.address, [
+      mintPrice,
+      nftMetadataUris,
+      vrfCoordinatorAddress,
+      vrfSubscriptionId,
+      vrfCallbackLimit,
+      vrfGasLane,
+    ]);
   }
 };
 
