@@ -57,6 +57,7 @@ if (isDevelopmentChain(network.config.chainId ?? HARDHAT_CHAINID)) {
 
             expect(numberOfMintedTokens.toString()).to.eq('1');
             expect(devType).to.be.lte(numebrOfDevTypes);
+            expect(await devNftContract.ownerOf(0)).to.eq(accounts[0].address);
             resolve();
           } catch (err) {
             reject(err);

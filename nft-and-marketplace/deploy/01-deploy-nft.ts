@@ -8,6 +8,7 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy, log } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
   const chainId = network.config.chainId || HARDHAT_CHAINID;
+  const waitConfirmations = isDevelopmentChain(chainId) ? 1 : 5;
   let {
     mintPrice,
     nftMetadataUris,
@@ -35,12 +36,13 @@ const deploy = async (hre: HardhatRuntimeEnvironment) => {
       vrfCallbackLimit,
       vrfGasLane,
     ],
-    waitConfirmations: 1,
+    waitConfirmations,
   });
   log('# Devs contract deployed at address:', nftContract.address);
   log('#########################');
 
   if (isDevelopmentChain(chainId)) {
+    // For live deployment this should be done by hand throught https://vrf.chain.link/
     log('#########################');
     log('# Adding consumer to VRFMock...');
     const vrfCoordinatorV2Mock = await ethers.getContractAt(

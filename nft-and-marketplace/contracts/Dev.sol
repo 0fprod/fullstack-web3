@@ -17,7 +17,7 @@ contract Dev is ERC721URIStorage, VRFConsumerBaseV2 {
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     uint8 private immutable MAX_TOKENS = 10;
     uint8 private constant NUMBER_OF_RANDOM_WORDS = 1;
-    uint8 private constant REQUEST_CONFIRMATIONS = 1;
+    uint8 private constant REQUEST_CONFIRMATIONS = 3;
     uint8 private s_tokenCounter;
     uint32 private immutable i_callbackGasLimit;
     uint64 private immutable i_subscriptionId;
