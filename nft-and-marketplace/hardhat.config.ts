@@ -28,7 +28,7 @@ const config: HardhatUserConfig = {
     },
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
     currency: 'ETH',
     coinmarketcap: COINMARKETCAP_API_KEY,
   },
