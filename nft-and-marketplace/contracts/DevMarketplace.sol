@@ -34,7 +34,8 @@ contract DevMarketplace is ReentrancyGuard {
         address owner
     );
 
-    event UpdatedPrice(
+    event NFTBought(
+        address buyerAddress,
         address nftContractAddress,
         uint256 tokenId,
         uint256 price
@@ -101,6 +102,7 @@ contract DevMarketplace is ReentrancyGuard {
         sellersBenefits[seller] += msg.value;
         delete listed[nftContractAddress][tokenId];
         nft.transferFrom(seller, msg.sender, tokenId);
+        emit NFTBought(msg.sender, nftContractAddress, tokenId, msg.value);
     }
 
     function unlistItem(
@@ -126,7 +128,7 @@ contract DevMarketplace is ReentrancyGuard {
 
         if (listed[nftContractAddress][tokenId].price > 0) {
             listed[nftContractAddress][tokenId].price = price;
-            emit UpdatedPrice(nftContractAddress, tokenId, price);
+            emit NFTListed(nftContractAddress, tokenId, price, msg.sender);
         }
     }
 
@@ -135,5 +137,16 @@ contract DevMarketplace is ReentrancyGuard {
         (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send ether");
         delete sellersBenefits[msg.sender];
+    }
+
+    function getListedNft(
+        address nftAddress,
+        uint256 tokenId
+    ) external view returns (ListedNft memory) {
+        return listed[nftAddress][tokenId];
+    }
+
+    function getBenefits(address seller) external view returns (uint256) {
+        return sellersBenefits[seller];
     }
 }
