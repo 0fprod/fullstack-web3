@@ -1,0 +1,30 @@
+type NFTListed @entity(immutable: true) {
+  id: Bytes!
+  nftContractAddress: Bytes! # address
+  tokenId: BigInt! # uint256
+  price: BigInt! # uint256
+  seller: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type NFTUnlisted @entity(immutable: true) {
+  id: Bytes!
+  nftContractAddress: Bytes! # address
+  tokenId: BigInt! # uint256
+  owner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type UpdatedPrice @entity(immutable: true) {
+  id: Bytes!
+  nftContractAddress: Bytes! # address
+  tokenId: BigInt! # uint256
+  price: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

@@ -1,0 +1,30 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DevMarketplace
+    network: goerli
+    source:
+      address: "0x374989864e548FDD6C761954FB41265e9D4bEe03"
+      abi: DevMarketplace
+      startBlock: 8480234
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NFTListed
+        - NFTUnlisted
+        - UpdatedPrice
+      abis:
+        - name: DevMarketplace
+          file: ./abis/DevMarketplace.json
+      eventHandlers:
+        - event: NFTListed(address,uint256,uint256,address)
+          handler: handleNFTListed
+        - event: NFTUnlisted(address,uint256,address)
+          handler: handleNFTUnlisted
+        - event: UpdatedPrice(address,uint256,uint256)
+          handler: handleUpdatedPrice
+      file: ./src/dev-marketplace.ts
