@@ -10,6 +10,36 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class NFTBought extends ethereum.Event {
+  get params(): NFTBought__Params {
+    return new NFTBought__Params(this);
+  }
+}
+
+export class NFTBought__Params {
+  _event: NFTBought;
+
+  constructor(event: NFTBought) {
+    this._event = event;
+  }
+
+  get buyerAddress(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get nftContractAddress(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get tokenId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get price(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
 export class NFTListed extends ethereum.Event {
   get params(): NFTListed__Params {
     return new NFTListed__Params(this);
@@ -66,35 +96,81 @@ export class NFTUnlisted__Params {
   }
 }
 
-export class UpdatedPrice extends ethereum.Event {
-  get params(): UpdatedPrice__Params {
-    return new UpdatedPrice__Params(this);
-  }
-}
-
-export class UpdatedPrice__Params {
-  _event: UpdatedPrice;
-
-  constructor(event: UpdatedPrice) {
-    this._event = event;
-  }
-
-  get nftContractAddress(): Address {
-    return this._event.parameters[0].value.toAddress();
-  }
-
-  get tokenId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+export class DevMarketplace__getListedNftResultValue0Struct extends ethereum.Tuple {
+  get seller(): Address {
+    return this[0].toAddress();
   }
 
   get price(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+    return this[1].toBigInt();
   }
 }
 
 export class DevMarketplace extends ethereum.SmartContract {
   static bind(address: Address): DevMarketplace {
     return new DevMarketplace("DevMarketplace", address);
+  }
+
+  getBenefits(seller: Address): BigInt {
+    let result = super.call("getBenefits", "getBenefits(address):(uint256)", [
+      ethereum.Value.fromAddress(seller)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_getBenefits(seller: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getBenefits",
+      "getBenefits(address):(uint256)",
+      [ethereum.Value.fromAddress(seller)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getListedNft(
+    nftAddress: Address,
+    tokenId: BigInt
+  ): DevMarketplace__getListedNftResultValue0Struct {
+    let result = super.call(
+      "getListedNft",
+      "getListedNft(address,uint256):((address,uint256))",
+      [
+        ethereum.Value.fromAddress(nftAddress),
+        ethereum.Value.fromUnsignedBigInt(tokenId)
+      ]
+    );
+
+    return changetype<DevMarketplace__getListedNftResultValue0Struct>(
+      result[0].toTuple()
+    );
+  }
+
+  try_getListedNft(
+    nftAddress: Address,
+    tokenId: BigInt
+  ): ethereum.CallResult<DevMarketplace__getListedNftResultValue0Struct> {
+    let result = super.tryCall(
+      "getListedNft",
+      "getListedNft(address,uint256):((address,uint256))",
+      [
+        ethereum.Value.fromAddress(nftAddress),
+        ethereum.Value.fromUnsignedBigInt(tokenId)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      changetype<DevMarketplace__getListedNftResultValue0Struct>(
+        value[0].toTuple()
+      )
+    );
   }
 }
 

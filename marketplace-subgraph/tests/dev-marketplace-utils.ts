@@ -1,10 +1,45 @@
 import { newMockEvent } from "matchstick-as"
 import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts"
 import {
+  NFTBought,
   NFTListed,
-  NFTUnlisted,
-  UpdatedPrice
+  NFTUnlisted
 } from "../generated/DevMarketplace/DevMarketplace"
+
+export function createNFTBoughtEvent(
+  buyerAddress: Address,
+  nftContractAddress: Address,
+  tokenId: BigInt,
+  price: BigInt
+): NFTBought {
+  let nftBoughtEvent = changetype<NFTBought>(newMockEvent())
+
+  nftBoughtEvent.parameters = new Array()
+
+  nftBoughtEvent.parameters.push(
+    new ethereum.EventParam(
+      "buyerAddress",
+      ethereum.Value.fromAddress(buyerAddress)
+    )
+  )
+  nftBoughtEvent.parameters.push(
+    new ethereum.EventParam(
+      "nftContractAddress",
+      ethereum.Value.fromAddress(nftContractAddress)
+    )
+  )
+  nftBoughtEvent.parameters.push(
+    new ethereum.EventParam(
+      "tokenId",
+      ethereum.Value.fromUnsignedBigInt(tokenId)
+    )
+  )
+  nftBoughtEvent.parameters.push(
+    new ethereum.EventParam("price", ethereum.Value.fromUnsignedBigInt(price))
+  )
+
+  return nftBoughtEvent
+}
 
 export function createNFTListedEvent(
   nftContractAddress: Address,
@@ -64,32 +99,4 @@ export function createNFTUnlistedEvent(
   )
 
   return nftUnlistedEvent
-}
-
-export function createUpdatedPriceEvent(
-  nftContractAddress: Address,
-  tokenId: BigInt,
-  price: BigInt
-): UpdatedPrice {
-  let updatedPriceEvent = changetype<UpdatedPrice>(newMockEvent())
-
-  updatedPriceEvent.parameters = new Array()
-
-  updatedPriceEvent.parameters.push(
-    new ethereum.EventParam(
-      "nftContractAddress",
-      ethereum.Value.fromAddress(nftContractAddress)
-    )
-  )
-  updatedPriceEvent.parameters.push(
-    new ethereum.EventParam(
-      "tokenId",
-      ethereum.Value.fromUnsignedBigInt(tokenId)
-    )
-  )
-  updatedPriceEvent.parameters.push(
-    new ethereum.EventParam("price", ethereum.Value.fromUnsignedBigInt(price))
-  )
-
-  return updatedPriceEvent
 }
