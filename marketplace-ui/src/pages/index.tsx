@@ -7,6 +7,7 @@ import NFTBox, { GraphQLNft } from '@/components/NFTBox/NFTBox';
 export default function Home() {
 	const { isWeb3Enabled } = useMoralis();
 	const { loading, data: activeNfts } = useQuery(GET_ACTIVE_NFTS);
+
 	return (
 		<main className={styles.main}>
 			<h1>Marketplace</h1>

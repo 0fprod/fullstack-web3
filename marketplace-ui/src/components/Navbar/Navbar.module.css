@@ -1,9 +1,10 @@
 .nav {
-  background-color: aqua;
+  background-color:aliceblue;
   display: flex;
   justify-content: space-between;
   width: 100%;
   padding: 1.5rem;
+  border-bottom: 1px solid salmon;
 }
 
 .links {
@@ -15,10 +16,16 @@
 }
 
 .links > li {
-  background-color: black;
-  color: yellow;
+  background-color: azure;
+  color: black;
+  border-radius: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.8rem
+  padding: 0.8rem;
+  pointer: cursor;
+}
+
+.links > li:hover{
+  background-color: aquamarine;
 }

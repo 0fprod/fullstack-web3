@@ -25,12 +25,14 @@ interface NFTBoxProps {
 }
 
 const devContract = process.env.NEXT_PUBLIC_DEV_CONTRACT ?? '';
+const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
 
 const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
-	const { isWeb3Enabled } = useMoralis();
+	const { isWeb3Enabled, account } = useMoralis();
 	const [tokenName, setTokenName] = useState('');
 	const [description, setDescription] = useState('');
 	const [image, setImage] = useState('');
+	const [isOwner, setIsOwner] = useState(false);
 
 	const {
 		runContractFunction: getTokenUri,
@@ -45,6 +47,26 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 		},
 	});
 
+	const { runContractFunction: getOwnerOfTokenId, data: ownerAddress } = useWeb3Contract({
+		abi: DevAbi,
+		contractAddress: devContract,
+		functionName: 'ownerOf',
+		params: {
+			tokenId: nft.tokenId,
+		},
+	});
+
+	const { runContractFunction: handleBuyNft, error: buyError } = useWeb3Contract({
+		abi: DevMarketplaceAbi,
+		contractAddress: marketplaceContract,
+		functionName: 'buyItem',
+		msgValue: nft.price,
+		params: {
+			nftContractAddress: devContract,
+			tokenId: nft.tokenId,
+		},
+	});
+
 	async function updateUI() {
 		const requestURL = (tokenUri as string).replace('ipfs://', 'https://ipfs.io/ipfs/');
 		const metadata = await (await fetch(requestURL)).json();
@@ -54,8 +76,22 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 		setImage(imageURIURL);
 	}
 
+	function foo() {
+		handleBuyNft({
+			onSuccess: () => {
+				console.log('Okmate');
+			},
+			onError: (err) => {
+				console.log('Something broke', err);
+			},
+		});
+	}
+
 	useEffect(() => {
-		isWeb3Enabled && getTokenUri();
+		if (isWeb3Enabled) {
+			getTokenUri();
+			getOwnerOfTokenId();
+		}
 	}, [isWeb3Enabled]);
 
 	useEffect(() => {
@@ -63,13 +99,17 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 	}, [tokenUri]);
 
 	useEffect(() => {
-		error && console.error('MYERROR', error);
+		ownerAddress && setIsOwner((ownerAddress as string).toLowerCase() === account?.toLowerCase());
+	}, [ownerAddress]);
+
+	useEffect(() => {
+		error && console.error('fetching error', error);
 	}, [error]);
 
 	return (
-		<Card title={tokenName} description={description}>
+		<Card title={tokenName} description={description} style={{ maxWidth: '25rem' }} onClick={foo} isDisabled={isOwner}>
 			<div className={styles.box}>
-				<Image src={image} height="200" width="200" alt="laimaje" loader={() => image} />
+				{image ? <Image src={image} height="200" width="200" alt="laimaje" loader={() => image} /> : 'fecthing image...'}
 				<div># {nft.tokenId}</div>
 				<div>{ethers.formatEther(nft.price)} ETH</div>
 			</div>
