@@ -6,13 +6,15 @@ import NFTBox, { GraphQLNft } from '@/components/NFTBox/NFTBox';
 import DevMarketplaceAbi from '../../abis/DevMarketplace.json';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import { useNotification } from '@web3uikit/core';
 
 const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
 
 export default function Home() {
 	const { isWeb3Enabled, account } = useMoralis();
 	const { loading, data: activeNfts } = useQuery(GET_ACTIVE_NFTS);
-	const [benefits, setBenefits] = useState('');
+	const [benefits, setBenefits] = useState('0');
+	const displayNotification = useNotification();
 	const { runContractFunction: getBenefits } = useWeb3Contract({
 		abi: DevMarketplaceAbi,
 		contractAddress: marketplaceContract,
@@ -30,20 +32,35 @@ export default function Home() {
 
 	function handleWithdraw() {
 		withdraw({
-			onSuccess: () => {
-				console.log('Withdrew all');
+			onSuccess: (txReceipt: any) => {
+				displayNotification({
+					position: 'topR',
+					type: 'success',
+					title: 'Withdraw',
+					message: `Tx: ${txReceipt.hash}`,
+				});
 			},
-			onError: (err) => {
-				console.warn('failed to widht', err);
+			onError: (txReceipt: any) => {
+				console.warn('failed to widht', txReceipt);
+				displayNotification({
+					position: 'topR',
+					type: 'error',
+					title: 'Withdraw',
+					message: `Tx: ${txReceipt.hash}`,
+				});
 			},
 		});
 	}
 
 	useEffect(() => {
-		getBenefits().then((benefits) => {
-			setBenefits(ethers.formatUnits(`${benefits}`));
-		});
-	}, []);
+		if (account) {
+			getBenefits().then((benefits) => {
+				if (benefits) {
+					setBenefits(ethers.formatUnits(`${benefits}`));
+				}
+			});
+		}
+	}, [account]);
 
 	return (
 		<main className={styles.main}>
