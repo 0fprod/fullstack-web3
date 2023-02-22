@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { MoralisProvider } from 'react-moralis';
 import Navbar from '@/components/Navbar/Navbar';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { NotificationProvider } from '@web3uikit/core';
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
@@ -21,8 +22,10 @@ export default function App({ Component, pageProps }: AppProps) {
 			</Head>
 			<MoralisProvider initializeOnMount={false}>
 				<ApolloProvider client={client}>
-					<Navbar />
-					<Component {...pageProps} />
+					<NotificationProvider>
+						<Navbar />
+						<Component {...pageProps} />
+					</NotificationProvider>
 				</ApolloProvider>
 			</MoralisProvider>
 		</div>

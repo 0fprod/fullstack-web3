@@ -1,6 +1,6 @@
 import styles from './Nftbox.module.css';
 import { NextPage } from 'next';
-import { Card } from '@web3uikit/core';
+import { Card, useNotification } from '@web3uikit/core';
 import { ethers } from 'ethers';
 import { useMoralis, useWeb3Contract } from 'react-moralis';
 import DevAbi from '../../../abis/Dev.json';
@@ -33,6 +33,7 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 	const [description, setDescription] = useState('');
 	const [image, setImage] = useState('');
 	const [isOwner, setIsOwner] = useState(false);
+	const displayNotification = useNotification();
 
 	const {
 		runContractFunction: getTokenUri,
@@ -56,7 +57,7 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 		},
 	});
 
-	const { runContractFunction: handleBuyNft, error: buyError } = useWeb3Contract({
+	const { runContractFunction: handleBuyNft } = useWeb3Contract({
 		abi: DevMarketplaceAbi,
 		contractAddress: marketplaceContract,
 		functionName: 'buyItem',
@@ -78,11 +79,22 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 
 	function foo() {
 		handleBuyNft({
-			onSuccess: () => {
-				console.log('Okmate');
+			onSuccess: (txReceipt: any) => {
+				displayNotification({
+					type: 'success',
+					position: 'topR',
+					title: 'NFT Bought',
+					message: `Congratulations mate! Tx: ${txReceipt.hash}`,
+				});
 			},
-			onError: (err) => {
-				console.log('Something broke', err);
+			onError: (txReceipt: any) => {
+				console.warn('failed to widht', txReceipt);
+				displayNotification({
+					position: 'topR',
+					type: 'error',
+					title: 'Withdraw',
+					message: `Tx: ${txReceipt.hash}`,
+				});
 			},
 		});
 	}
