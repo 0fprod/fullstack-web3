@@ -76,9 +76,7 @@ export default function Home() {
 						<span>Fetching...</span>
 					) : (
 						<ul className={styles.nfts}>
-							{activeNfts.nftactives.map((nft: GraphQLNft) => (
-								<NFTBox key={nft.id} nft={nft} metadata={{}} />
-							))}
+							{activeNfts ? activeNfts.nftactives.map((nft: GraphQLNft) => <NFTBox key={nft.id} nft={nft} metadata={{}} />) : <>There are no listed items</>}
 						</ul>
 					)}
 				</div>

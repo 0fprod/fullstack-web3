@@ -77,7 +77,7 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 		setImage(imageURIURL);
 	}
 
-	function foo() {
+	function buyNft() {
 		handleBuyNft({
 			onSuccess: (txReceipt: any) => {
 				displayNotification({
@@ -88,12 +88,12 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 				});
 			},
 			onError: (txReceipt: any) => {
-				console.warn('failed to widht', txReceipt);
+				console.log(JSON.stringify(txReceipt));
 				displayNotification({
 					position: 'topR',
 					type: 'error',
-					title: 'Withdraw',
-					message: `Tx: ${txReceipt.hash}`,
+					title: 'Error',
+					message: `Reverted tx`,
 				});
 			},
 		});
@@ -119,7 +119,7 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 	}, [error]);
 
 	return (
-		<Card title={tokenName} description={description} style={{ maxWidth: '25rem' }} onClick={foo} isDisabled={isOwner}>
+		<Card title={tokenName} description={description} style={{ maxWidth: '25rem' }} onClick={buyNft} isDisabled={isOwner}>
 			<div className={styles.box}>
 				{image ? <Image src={image} height="200" width="200" alt="laimaje" loader={() => image} /> : 'fecthing image...'}
 				<div># {nft.tokenId}</div>

@@ -1,4 +1,4 @@
-import { INftCardProps, NftCard, useNotification } from '@web3uikit/core';
+import { INftCardProps, NftCard } from '@web3uikit/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useMoralis } from 'react-moralis';
 
@@ -6,7 +6,6 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY ?? '';
 
 export default function MyNfts() {
 	const { account, isWeb3Enabled } = useMoralis();
-	const dispatch = useNotification();
 	const [nfts, setNFTS] = useState([]);
 
 	const fetchNftsByAddress = useCallback(async () => {
@@ -31,7 +30,9 @@ export default function MyNfts() {
 		<>
 			<h2>Owned NFTs</h2>
 			{isWeb3Enabled
-				? nfts.map((nft: INftCardProps['moralisApiResult']) => <NftCard chain="goerli" moralisApiResult={nft} key={`${nft.token_address}${nft.token_id}`} />)
+				? nfts
+					? nfts.map((nft: INftCardProps['moralisApiResult']) => <NftCard chain="goerli" moralisApiResult={nft} key={`${nft.token_address}${nft.token_id}`} />)
+					: 'You have 0 nfts'
 				: 'Please connect a Wallet'}
 		</>
 	);
