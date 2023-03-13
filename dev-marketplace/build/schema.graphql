@@ -1,4 +1,4 @@
-type NFTBought @entity(immutable: true) {
+type NFTBought @entity(immutable: false) {
   id: Bytes!
   buyerAddress: Bytes! # address
   nftContractAddress: Bytes! # address
@@ -9,7 +9,7 @@ type NFTBought @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type NFTListed @entity(immutable: true) {
+type NFTListed @entity(immutable: false) {
   id: Bytes!
   nftContractAddress: Bytes! # address
   tokenId: BigInt! # uint256
@@ -32,7 +32,7 @@ type NFTActive @entity(immutable: false) {
   transactionHash: Bytes!
 }
 
-type NFTUnlisted @entity(immutable: true) {
+type NFTUnlisted @entity(immutable: false) {
   id: Bytes!
   nftContractAddress: Bytes! # address
   tokenId: BigInt! # uint256
