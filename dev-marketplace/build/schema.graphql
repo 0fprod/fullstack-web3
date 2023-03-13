@@ -20,7 +20,7 @@ type NFTListed @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type NFTActive @entity(immutable: true) {
+type NFTActive @entity(immutable: false) {
   id: Bytes!
   nftContractAddress: Bytes! # address
   tokenId: BigInt! # uint256

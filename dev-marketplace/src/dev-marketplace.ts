@@ -1,4 +1,4 @@
-import { Address, Bytes, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import {
   NFTBought as NFTBoughtEvent,
   NFTListed as NFTListedEvent,
@@ -7,11 +7,11 @@ import {
 import { NFTBought, NFTListed, NFTUnlisted, NFTActive } from '../generated/schema';
 
 export function handleNFTBought(event: NFTBoughtEvent): void {
-  let entity = NFTBought.load(buildId(event));
-  let active = NFTActive.load(buildId(event));
+  let entity = NFTBought.load(buildId(event.params.nftContractAddress, event.params.tokenId));
+  let active = NFTActive.load(buildId(event.params.nftContractAddress, event.params.tokenId));
 
   if (!entity) {
-    entity = new NFTBought(buildId(event));
+    entity = new NFTBought(buildId(event.params.nftContractAddress, event.params.tokenId));
   }
 
   entity.buyerAddress = event.params.buyerAddress;
@@ -31,15 +31,15 @@ export function handleNFTBought(event: NFTBoughtEvent): void {
 }
 
 export function handleNFTListed(event: NFTListedEvent): void {
-  let entity = NFTListed.load(buildId(event));
-  let active = NFTActive.load(buildId(event));
+  let entity = NFTListed.load(buildId(event.params.nftContractAddress, event.params.tokenId));
+  let active = NFTActive.load(buildId(event.params.nftContractAddress, event.params.tokenId));
 
   if (!entity) {
-    entity = new NFTListed(buildId(event));
+    entity = new NFTListed(buildId(event.params.nftContractAddress, event.params.tokenId));
   }
 
   if (!active) {
-    active = new NFTActive(buildId(event));
+    active = new NFTActive(buildId(event.params.nftContractAddress, event.params.tokenId));
   }
 
   entity.nftContractAddress = event.params.nftContractAddress;
@@ -64,11 +64,11 @@ export function handleNFTListed(event: NFTListedEvent): void {
 }
 
 export function handleNFTUnlisted(event: NFTUnlistedEvent): void {
-  let entity = NFTUnlisted.load(buildId(event));
-  let active = NFTActive.load(buildId(event));
+  let entity = NFTUnlisted.load(buildId(event.params.nftContractAddress, event.params.tokenId));
+  let active = NFTActive.load(buildId(event.params.nftContractAddress, event.params.tokenId));
 
   if (!entity) {
-    entity = new NFTUnlisted(buildId(event));
+    entity = new NFTUnlisted(buildId(event.params.nftContractAddress, event.params.tokenId));
   }
 
   entity.nftContractAddress = event.params.nftContractAddress;
@@ -86,9 +86,6 @@ export function handleNFTUnlisted(event: NFTUnlistedEvent): void {
   entity.save();
 }
 
-function buildId(event: ethereum.Event): Bytes {
-  const logIndex = event.logIndex;
-  const hash = event.transaction.hash;
-
-  return hash.concatI32(logIndex.toI32());
+function buildId(nftContractAddress: Address, tokenId: BigInt): Bytes {
+  return nftContractAddress.concatI32(tokenId.toI32());
 }
