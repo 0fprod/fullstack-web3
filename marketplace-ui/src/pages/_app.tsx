@@ -8,7 +8,7 @@ import { NotificationProvider } from '@web3uikit/core';
 
 const client = new ApolloClient({
 	cache: new InMemoryCache(),
-	uri: 'https://api.studio.thegraph.com/query/36860/dev-marketplace/v0.0.3',
+	uri: 'https://api.studio.thegraph.com/query/36860/dev-marketplace/v0.0.6',
 });
 
 export default function App({ Component, pageProps }: AppProps) {
