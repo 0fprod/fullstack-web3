@@ -5,7 +5,7 @@ import DevMarketplaceAbi from '../../abis/DevMarketplace.json';
 import DevAbi from '../../abis/Dev.json';
 import { ethers } from 'ethers';
 
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY ?? '';
+const MORALIS_API_KEY = process.env.NEXT_PUBLIC_MORALIS_API_KEY ?? '';
 const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
 const devContract = process.env.NEXT_PUBLIC_DEV_CONTRACT ?? '';
 
@@ -90,10 +90,10 @@ export default function MyNfts() {
 	};
 
 	const fetchNftsByAddress = useCallback(async () => {
-		const d = await fetch(`https://deep-index.moralis.io/api/v2/${account}/nft?chain=goerli`, {
+		const d = await fetch(`https://deep-index.moralis.io/api/v2/${account}/nft?chain=sepolia`, {
 			method: 'GET',
 			headers: {
-				'X-API-KEY': API_KEY,
+				'X-API-KEY': MORALIS_API_KEY,
 			},
 		});
 		return await d.json();
@@ -114,7 +114,7 @@ export default function MyNfts() {
 				? nfts
 					? nfts.map((nft: INftCardProps['moralisApiResult']) => (
 							<div>
-								<NftCard chain="goerli" moralisApiResult={nft} key={`${nft.token_address}${nft.token_id}`} />
+								<NftCard chain="sepolia" moralisApiResult={nft} key={`${nft.token_address}${nft.token_id}`} />
 								<button onClick={(e) => clickNft(nft)}>approve</button>
 								<button onClick={(e) => listNft(nft)}>list</button>
 							</div>

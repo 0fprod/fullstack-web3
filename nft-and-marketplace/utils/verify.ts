@@ -1,6 +1,6 @@
 import { run } from 'hardhat';
 
-export const verify = async (contractAddress: any, args: any) => {
+export const verify = async (contractAddress: any, args: any): Promise<void> => {
   console.log('Verifying contract...');
   try {
     await run('verify:verify', {

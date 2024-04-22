@@ -7,10 +7,10 @@ import 'hardhat-contract-sizer';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
 import dotenv from 'dotenv';
-import { GOERLI_CHAINID, HARDHAT_CHAINID } from './utils/constants';
+import { SEPOLIA_CHAINID, HARDHAT_CHAINID } from './utils/constants';
 
 dotenv.config();
-const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || '';
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || '';
 const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || '';
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || '';
@@ -21,10 +21,10 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: HARDHAT_CHAINID,
     },
-    goerli: {
-      url: GOERLI_RPC_URL,
+    sepolia: {
+      url: SEPOLIA_RPC_URL,
       accounts: [PRIVATE_KEY],
-      chainId: GOERLI_CHAINID,
+      chainId: SEPOLIA_CHAINID,
     },
   },
   gasReporter: {
@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      goerli: ETHERSCAN_API_KEY,
+      sepolia: ETHERSCAN_API_KEY,
     },
   },
   namedAccounts: {

@@ -16,17 +16,17 @@ interface ConfigHelper {
 }
 
 export const networkConfigHelper: ConfigHelper = {
-  5: {
-    name: 'goerli',
+  11155111: {
+    name: 'sepolia',
     mintPrice: ethers.utils.parseEther('0.01'),
     nftMetadataUris: [
       'ipfs://QmPpew49diwW6hLhPXiWsWLwxSRJJBp8KRp6A1eYucvLDp', // Junior
       'ipfs://bafybeieefb7gwrxc5ijq3mf6bm6odkwcdgvbjrfalssije7ow4okf4q2g4/', // Medior
       'ipfs://QmVkZEJkeZ4PxQwCmAp1NZkkBiKwNvmDVHJ3odBTmxCe2H', // Senior
     ],
-    vrfCoordinatorAddress: '0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D',
-    vrfSubscriptionId: '8113',
-    vrfGasLane: '0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15',
+    vrfCoordinatorAddress: '0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625',
+    vrfSubscriptionId: '11311',
+    vrfGasLane: '0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c',
     vrfCallbackLimit: '500000',
   },
   31337: {

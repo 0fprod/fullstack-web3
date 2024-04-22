@@ -71,7 +71,7 @@ const deployVRFCoordinatorMock = async (
 ): Promise<{ address: string; subscriptionId: string }> => {
   const { deploy, log } = hre.deployments;
   const { deployer } = await hre.getNamedAccounts();
-  const baseFee = ethers.utils.parseEther('0.25'); // 0.25Link is premium https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#goerli-testnet
+  const baseFee = ethers.utils.parseEther('0.25'); // 0.25Link is premium https://docs.chain.link/vrf/v2/subscription/supported-networks#sepolia-testnet
   const gasPriceLink = 1e9; // based on the gas price of the chain. Its like LINKs per GAS unit
 
   log('#########################');

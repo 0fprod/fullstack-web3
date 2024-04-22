@@ -1,2 +1,2 @@
 export const HARDHAT_CHAINID = 31337;
-export const GOERLI_CHAINID = 5;
+export const SEPOLIA_CHAINID = 11155111;

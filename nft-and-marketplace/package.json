@@ -10,7 +10,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
-    "deploy:goerli": "hardhat deploy --network goerli",
+    "deploy:sepolia": "hardhat deploy --network sepolia",
     "deploy:local": "hardhat deploy --network hardhat --tags all",
     "deploy:local:marketplace": "hardhat deploy --network hardhat --tags marketplace"
   },
