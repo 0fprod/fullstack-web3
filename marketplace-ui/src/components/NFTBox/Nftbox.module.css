@@ -1,7 +1,38 @@
-.box{
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  text-align: left;
+.card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	width: 25rem;
+	border-radius: 10px;
+	background-color: black;
+	padding: 1rem;
+	color: white;
+}
+
+.card h2 {
+	color: yellow;
+}
+
+.card .data {
+	margin-top: 1rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	align-items: start;
+	width: 100%;
+	border-radius: 5px;
+	border: 1px solid white;
+	padding: 0.25rem;
+}
+
+.card .description {
+	margin-top: 1rem;
+}
+
+.card .skills {
+	color: red;
+	margin-top: 1rem;
+	display: flex;
+	flex-wrap: wrap;
 }

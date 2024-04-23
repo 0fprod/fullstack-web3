@@ -1,12 +1,13 @@
 import styles from './Nftbox.module.css';
 import { NextPage } from 'next';
-import { Card, useNotification } from '@web3uikit/core';
+import { Button, useNotification } from '@web3uikit/core';
 import { ethers } from 'ethers';
 import { useMoralis, useWeb3Contract } from 'react-moralis';
 import DevAbi from '../../../abis/Dev.json';
 import DevMarketplaceAbi from '../../../abis/DevMarketplace.json';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { TrimAccountAddress } from '@/utils/buildtxurl';
 
 export interface GraphQLNft {
 	id: string;
@@ -18,6 +19,11 @@ export interface GraphQLNft {
 }
 
 export interface Metadata {}
+
+interface Attributes {
+	skill: string;
+	level: number;
+}
 
 interface NFTBoxProps {
 	nft: GraphQLNft;
@@ -32,6 +38,7 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 	const [tokenName, setTokenName] = useState('');
 	const [description, setDescription] = useState('');
 	const [image, setImage] = useState('');
+	const [attributes, setAttributes] = useState<Attributes[]>([]);
 	const [isOwner, setIsOwner] = useState(false);
 	const displayNotification = useNotification();
 
@@ -75,6 +82,7 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 		setTokenName(metadata.name);
 		setDescription(metadata.description);
 		setImage(imageURIURL);
+		setAttributes(metadata.attributes);
 	}
 
 	function buyNft() {
@@ -119,13 +127,40 @@ const NFTBox: NextPage<NFTBoxProps> = ({ nft }) => {
 	}, [error]);
 
 	return (
-		<Card title={tokenName} description={description} style={{ maxWidth: '25rem' }} onClick={buyNft} isDisabled={isOwner}>
-			<div className={styles.box}>
-				{image ? <Image src={image} height="200" width="200" alt="laimaje" loader={() => image} /> : 'fecthing image...'}
-				<div># {nft.tokenId}</div>
-				<div>{ethers.formatEther(nft.price)} ETH</div>
+		<div className={styles.card}>
+			<h2>{tokenName}</h2>
+			{image ? <Image src={image} height="200" width="200" alt="laimaje" loader={() => image} /> : 'fecthing image...'}
+			<div className={styles.data}>
+				<span>
+					<i>TokenId: &nbsp;</i> #{nft.tokenId}
+				</span>
+				<span>
+					<i>Owner: &nbsp;</i>
+					{isOwner ? 'Myself' : TrimAccountAddress(ownerAddress as string)}
+				</span>
+				<span>
+					<i>Price: &nbsp;</i>
+					{ethers.formatEther(nft.price)} ETH
+				</span>
 			</div>
-		</Card>
+			<div className={styles.description}>{description}</div>
+			<div className={styles.skills}>
+				{attributes.map((attr, index) => (
+					<div key={index}>
+						<span>
+							<i>Skill: &nbsp;</i>
+							{attr.skill}
+						</span>
+						&nbsp;&nbsp;
+						<span>
+							<i>Level: &nbsp;</i>
+							{attr.level}
+						</span>
+					</div>
+				))}
+			</div>
+			<Button theme="moneyPrimary" text="Buy" onClick={buyNft} disabled={isOwner} />
+		</div>
 	);
 };
 

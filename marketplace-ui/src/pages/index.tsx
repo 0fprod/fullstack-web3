@@ -6,8 +6,8 @@ import NFTBox, { GraphQLNft } from '@/components/NFTBox/NFTBox';
 import DevMarketplaceAbi from '../../abis/DevMarketplace.json';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import { useNotification } from '@web3uikit/core';
-import BuildTxUrl from '@/utils/buildtxurl';
+import { Button, useNotification } from '@web3uikit/core';
+import { BuildTxUrl } from '@/utils/buildtxurl';
 
 const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
 
@@ -71,9 +71,9 @@ export default function Home() {
 			<article>These are the active nfts</article>
 			{isWeb3Enabled && (
 				<div>
-					<div>
+					<div style={{ margin: '1rem' }}>
 						<h3>Benefits: {benefits} ETH</h3>
-						<button onClick={handleWithdraw}>Withdraw</button>
+						<Button theme="primary" onClick={handleWithdraw} text="Withdraw" />
 					</div>
 					{loading ? (
 						<span>Fetching...</span>

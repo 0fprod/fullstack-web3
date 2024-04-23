@@ -1,11 +1,10 @@
 import React from 'react';
 
-// export a function that receives a string and returns an url with the following structure https://sepolia.etherscan.io/tx/<parameter>
 interface BuildTxUrlProps {
 	txHash: string;
 }
 
-const BuildTxUrl: React.FC<BuildTxUrlProps> = ({ txHash }) => {
+export const BuildTxUrl: React.FC<BuildTxUrlProps> = ({ txHash }) => {
 	return (
 		<>
 			Tx in progress! Click the block explorer here:
@@ -20,4 +19,7 @@ const BuildTxUrl: React.FC<BuildTxUrlProps> = ({ txHash }) => {
 	);
 };
 
-export default BuildTxUrl;
+export const TrimAccountAddress = (account: string) => {
+	if (!account) return '';
+	return `${account.slice(0, 6)}...${account.slice(-4)}`;
+};

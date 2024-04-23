@@ -24,9 +24,18 @@ This project is an NFT Marketplace. Users can mint randomly a "Dev" NFT by payin
 
 - There's a subgraph listening to events. This way the project can keep track of NFT traded and published to be sold.
 
-## Stack used
+## Tech stack used
 
 - Solidity
 - Hardhat
 - Typescript
 - NextJS
+- Web3UIKit
+- TheGraph
+- Chainlink VRF
+
+## Links
+
+- [Verified NFT Contract](https://sepolia.etherscan.io/address/0x8e0f233306b0b6d18e59135d6eb5394b91609463)
+- [Verified Marketplace Contract](https://sepolia.etherscan.io/address/0x38E915aa7BdEBf0638aCdBCE97baCaEE56872f80)
+- [Web app](https://fullstack-web3.onrender.com/)
