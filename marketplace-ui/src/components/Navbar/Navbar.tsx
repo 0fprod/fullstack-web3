@@ -12,6 +12,9 @@ export default function Navbar() {
 				<li>
 					<Link href="/my-nfts">My NFTs</Link>
 				</li>
+				<li>
+					<Link href="/mint-nft">Mint</Link>
+				</li>
 			</ul>
 			<ConnectButton />
 		</nav>

@@ -21,25 +21,11 @@ contract DevMarketplace is ReentrancyGuard {
     mapping(address => mapping(uint256 => ListedNft)) listed;
     mapping(address => uint256) sellersBenefits;
 
-    event NFTListed(
-        address nftContractAddress,
-        uint256 tokenId,
-        uint256 price,
-        address seller
-    );
+    event NFTListed(address nftContractAddress, uint256 tokenId, uint256 price, address seller);
 
-    event NFTUnlisted(
-        address nftContractAddress,
-        uint256 tokenId,
-        address owner
-    );
+    event NFTUnlisted(address nftContractAddress, uint256 tokenId, address owner);
 
-    event NFTBought(
-        address buyerAddress,
-        address nftContractAddress,
-        uint256 tokenId,
-        uint256 price
-    );
+    event NFTBought(address buyerAddress, address nftContractAddress, uint256 tokenId, uint256 price);
 
     constructor() {}
 
@@ -55,7 +41,7 @@ contract DevMarketplace is ReentrancyGuard {
 
     modifier hasApproval(address nftContractAddress, uint256 tokenId) {
         IERC721 nft = IERC721(nftContractAddress);
-        address approver = nft.getApproved(0);
+        address approver = nft.getApproved(tokenId);
 
         if (approver != address(this)) {
             revert DevMarketplace__MarketplaceIsNotApproved();
@@ -63,11 +49,7 @@ contract DevMarketplace is ReentrancyGuard {
         _;
     }
 
-    function listItem(
-        address nftContractAddress,
-        uint256 tokenId,
-        uint256 price
-    )
+    function listItem(address nftContractAddress, uint256 tokenId, uint256 price)
         external
         isOwner(nftContractAddress, tokenId)
         hasApproval(nftContractAddress, tokenId)
@@ -85,10 +67,7 @@ contract DevMarketplace is ReentrancyGuard {
         emit NFTListed(nftContractAddress, tokenId, price, msg.sender);
     }
 
-    function buyItem(
-        address nftContractAddress,
-        uint256 tokenId
-    ) external payable nonReentrant {
+    function buyItem(address nftContractAddress, uint256 tokenId) external payable nonReentrant {
         if (listed[nftContractAddress][tokenId].price == 0) {
             revert DevMarketplace__TokenIdNotListed();
         }
@@ -105,10 +84,7 @@ contract DevMarketplace is ReentrancyGuard {
         emit NFTBought(msg.sender, nftContractAddress, tokenId, msg.value);
     }
 
-    function unlistItem(
-        address nftContractAddress,
-        uint256 tokenId
-    ) external isOwner(nftContractAddress, tokenId) {
+    function unlistItem(address nftContractAddress, uint256 tokenId) external isOwner(nftContractAddress, tokenId) {
         if (listed[nftContractAddress][tokenId].price <= 0) {
             revert DevMarketplace__TokenIdNotListed();
         }
@@ -117,11 +93,10 @@ contract DevMarketplace is ReentrancyGuard {
         emit NFTUnlisted(nftContractAddress, tokenId, msg.sender);
     }
 
-    function updatePrice(
-        address nftContractAddress,
-        uint256 tokenId,
-        uint256 price
-    ) external isOwner(nftContractAddress, tokenId) {
+    function updatePrice(address nftContractAddress, uint256 tokenId, uint256 price)
+        external
+        isOwner(nftContractAddress, tokenId)
+    {
         if (price <= 0) {
             revert DevMarketplace__PriceMustBeGreaterThanZero();
         }
@@ -134,15 +109,12 @@ contract DevMarketplace is ReentrancyGuard {
 
     function withdraw() external payable {
         uint256 amount = sellersBenefits[msg.sender];
-        (bool sent, ) = msg.sender.call{value: amount}("");
+        (bool sent,) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send ether");
         delete sellersBenefits[msg.sender];
     }
 
-    function getListedNft(
-        address nftAddress,
-        uint256 tokenId
-    ) external view returns (ListedNft memory) {
+    function getListedNft(address nftAddress, uint256 tokenId) external view returns (ListedNft memory) {
         return listed[nftAddress][tokenId];
     }
 

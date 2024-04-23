@@ -1,25 +1,23 @@
-import { INftCardProps, NftCard, useNotification } from '@web3uikit/core';
+import { INftCardProps, NftCard, useNotification, Button } from '@web3uikit/core';
 import { useCallback, useEffect, useState } from 'react';
 import { useMoralis, useWeb3Contract } from 'react-moralis';
 import DevMarketplaceAbi from '../../abis/DevMarketplace.json';
 import DevAbi from '../../abis/Dev.json';
 import { ethers } from 'ethers';
+import BuildTxUrl from '@/utils/buildtxurl';
 
 const MORALIS_API_KEY = process.env.NEXT_PUBLIC_MORALIS_API_KEY ?? '';
 const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
-const devContract = process.env.NEXT_PUBLIC_DEV_CONTRACT ?? '';
 
 export default function MyNfts() {
-	const { account, isWeb3Enabled } = useMoralis();
+	const { account, isWeb3Enabled, web3 } = useMoralis();
 	const [nfts, setNFTS] = useState([]);
 	const displayNotification = useNotification();
 
 	//@ts-ignore
 	const { runContractFunction: approveNft } = useWeb3Contract();
-	//@ts-ignore
-	const { runContractFunction: listItem } = useWeb3Contract();
 
-	const clickNft = (nft: INftCardProps['moralisApiResult']) => {
+	const onApprove = (nft: INftCardProps['moralisApiResult']) => {
 		const { token_address, token_id } = nft;
 		const approveParams = {
 			abi: DevAbi,
@@ -53,31 +51,33 @@ export default function MyNfts() {
 		});
 	};
 
-	const listNft = (nft: INftCardProps['moralisApiResult']) => {
+	const onList = (nft: INftCardProps['moralisApiResult']) => {
 		const { token_address, token_id } = nft;
+		if (web3 === null) {
+			return;
+		}
 
-		const listParams = {
-			abi: DevMarketplaceAbi,
-			contractAddress: marketplaceContract,
-			functionName: 'listItem',
-			params: {
-				nftContractAddress: token_address,
-				tokenId: token_id,
-				price: ethers.parseUnits('1'),
-			},
+		const signer = web3.getSigner();
+		const contract = new ethers.Contract(marketplaceContract, DevMarketplaceAbi);
+		const tx = {
+			to: marketplaceContract,
+			value: ethers.parseEther('0'),
+			gasLimit: 2000000,
+			data: contract.interface.encodeFunctionData('listItem', [token_address, token_id, ethers.parseEther('1')]),
 		};
 
-		listItem({
-			params: listParams,
-			onSuccess: (results: any) => {
+		signer
+			.sendTransaction(tx)
+			.then((txReceipt) => {
 				displayNotification({
 					type: 'success',
 					position: 'topR',
 					title: 'Listed',
-					message: `Congratulations mate! Tx: ${results.hash}`,
+					// @ts-ignore
+					message: BuildTxUrl({ txHash: txReceipt.hash }),
 				});
-			},
-			onError(error) {
+			})
+			.catch((error) => {
 				console.error(JSON.stringify(error));
 				displayNotification({
 					position: 'topR',
@@ -85,8 +85,7 @@ export default function MyNfts() {
 					title: 'Error',
 					message: `Could list`,
 				});
-			},
-		});
+			});
 	};
 
 	const fetchNftsByAddress = useCallback(async () => {
@@ -110,17 +109,21 @@ export default function MyNfts() {
 	return (
 		<>
 			<h2>Owned NFTs</h2>
-			{isWeb3Enabled
-				? nfts
-					? nfts.map((nft: INftCardProps['moralisApiResult']) => (
-							<div>
-								<NftCard chain="sepolia" moralisApiResult={nft} key={`${nft.token_address}${nft.token_id}`} />
-								<button onClick={(e) => clickNft(nft)}>approve</button>
-								<button onClick={(e) => listNft(nft)}>list</button>
-							</div>
-					  ))
-					: 'You have 0 nfts'
-				: 'Please connect a Wallet'}
+			<div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row', gap: '1.5rem', width: '100%', padding: '0.5rem', flexWrap: 'wrap' }}>
+				{isWeb3Enabled
+					? nfts
+						? nfts.map((nft: INftCardProps['moralisApiResult']) => (
+								<div key={`${nft.token_address}${nft.token_id}`}>
+									<NftCard chain="sepolia" moralisApiResult={nft} />
+									<div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row', gap: '1rem' }}>
+										<Button theme="secondary" onClick={(e) => onApprove(nft)} text="Approve" />
+										<Button theme="moneyPrimary" onClick={(e) => onList(nft)} text="List!" />
+									</div>
+								</div>
+						  ))
+						: 'You have 0 nfts'
+					: 'Please connect a Wallet'}
+			</div>
 		</>
 	);
 }
