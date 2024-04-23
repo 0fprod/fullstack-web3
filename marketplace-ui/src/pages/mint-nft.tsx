@@ -8,7 +8,7 @@ import Image from 'next/image';
 const devContract = process.env.NEXT_PUBLIC_DEV_CONTRACT ?? '';
 
 export default function MintNft() {
-	const { isWeb3Enabled, provider, account } = useMoralis();
+	const { isWeb3Enabled } = useMoralis();
 	const [fee, setFee] = useState(0.01);
 	const displayNotification = useNotification();
 	const [juniorImage, setJuniorImage] = useState('');
@@ -20,12 +20,6 @@ export default function MintNft() {
 
 	//@ts-ignore
 	const { runContractFunction: requestNft } = useWeb3Contract();
-	const { Web3API } = useMoralisWeb3Api();
-
-	// const requestNftMintedEvent = async () => {
-	// 	const bytes = ethers.toUtf8Bytes('NftMinted(uint8)');
-	// 	const topic0 = ethers.keccak256(bytes);
-	// };
 
 	const onMint = () => {
 		requestNft({
@@ -40,7 +34,8 @@ export default function MintNft() {
 					type: 'success',
 					position: 'topR',
 					title: 'Congrats! Minting is in progress!',
-					message: `Tx: ${txReceipt.hash}`,
+					// @ts-ignore
+					message: BuildTxUrl({ txHash: txReceipt.hash }),
 				});
 				// requestNftMintedEvent();
 			},
@@ -50,7 +45,7 @@ export default function MintNft() {
 					position: 'topR',
 					type: 'error',
 					title: 'Error',
-					message: `Could not mint`,
+					message: `Could not mint! :(`,
 				});
 			},
 		});
@@ -70,25 +65,6 @@ export default function MintNft() {
 		fetchImage(seniorUrl, setSeniorImage);
 	}, []);
 
-	// Test providers logs
-	useEffect(() => {
-		if (provider) {
-			console.log('Provider', provider);
-			const bytes = ethers.toUtf8Bytes('NftMinted(uint8)');
-			const topic0 = ethers.keccak256(bytes);
-			const p = provider as any; // window.ethereum
-
-			const filter = {
-				address: devContract,
-				topics: [topic0],
-			};
-
-			p.on(filter, (log: any, event: any) => {
-				console.log('log', log);
-				console.log('event', event);
-			});
-		}
-	}, [provider]);
 	return (
 		<div style={{ width: '100%', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
 			<div style={{}}>

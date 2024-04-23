@@ -36,7 +36,8 @@ export default function MyNfts() {
 					type: 'success',
 					position: 'topR',
 					title: 'Approve',
-					message: `Congratulations mate! Tx: ${txReceipt.hash}`,
+					// @ts-ignore
+					message: BuildTxUrl({ txHash: txReceipt.hash }),
 				});
 			},
 			onError: (txReceipt: any) => {
@@ -45,7 +46,7 @@ export default function MyNfts() {
 					position: 'topR',
 					type: 'error',
 					title: 'Error',
-					message: `Could not approve`,
+					message: `Could not approve!`,
 				});
 			},
 		});
@@ -83,12 +84,15 @@ export default function MyNfts() {
 					position: 'topR',
 					type: 'error',
 					title: 'Error',
-					message: `Could list`,
+					message: `Could not list!`,
 				});
 			});
 	};
 
 	const fetchNftsByAddress = useCallback(async () => {
+		if (account === null) {
+			return;
+		}
 		const d = await fetch(`https://deep-index.moralis.io/api/v2/${account}/nft?chain=sepolia`, {
 			method: 'GET',
 			headers: {

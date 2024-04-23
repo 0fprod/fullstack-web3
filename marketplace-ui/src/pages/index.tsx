@@ -7,6 +7,7 @@ import DevMarketplaceAbi from '../../abis/DevMarketplace.json';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { useNotification } from '@web3uikit/core';
+import BuildTxUrl from '@/utils/buildtxurl';
 
 const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
 
@@ -37,7 +38,8 @@ export default function Home() {
 					position: 'topR',
 					type: 'success',
 					title: 'Withdraw',
-					message: `Tx: ${txReceipt.hash}`,
+					// @ts-ignore
+					message: BuildTxUrl({ txHash: txReceipt.hash }),
 				});
 			},
 			onError: (txReceipt: any) => {
@@ -46,7 +48,8 @@ export default function Home() {
 					position: 'topR',
 					type: 'error',
 					title: 'Withdraw',
-					message: `Tx: ${txReceipt.hash}`,
+					// @ts-ignore
+					message: BuildTxUrl({ txHash: txReceipt.hash }),
 				});
 			},
 		});
@@ -75,9 +78,9 @@ export default function Home() {
 					{loading ? (
 						<span>Fetching...</span>
 					) : (
-						<ul className={styles.nfts}>
+						<section style={{ display: 'flex', flexDirection: 'row', gap: '1.5rem' }}>
 							{activeNfts ? activeNfts.nftactives.map((nft: GraphQLNft) => <NFTBox key={nft.id} nft={nft} metadata={{}} />) : <>There are no listed items</>}
-						</ul>
+						</section>
 					)}
 				</div>
 			)}

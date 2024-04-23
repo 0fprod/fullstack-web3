@@ -8,10 +8,14 @@ interface BuildTxUrlProps {
 const BuildTxUrl: React.FC<BuildTxUrlProps> = ({ txHash }) => {
 	return (
 		<>
-			Tx in progress! Click here :
-			<a href={`https://sepolia.etherscan.io/tx/${txHash}`} target="_blank">
-				{txHash}
-			</a>
+			Tx in progress! Click the block explorer here:
+			<u>
+				<i>
+					<a href={`https://sepolia.etherscan.io/tx/${txHash}`} target="_blank">
+						{txHash}
+					</a>
+				</i>
+			</u>
 		</>
 	);
 };
