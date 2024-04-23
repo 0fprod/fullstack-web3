@@ -1,8 +1,0 @@
-{
-  "goerli": {
-    "DevMarketplace": {
-      "address": "0x62a6ef16f4c7605e89f6ebbc38dac89bc7aacd0b",
-      "startBlock": 8515355
-    }
-  }
-}
