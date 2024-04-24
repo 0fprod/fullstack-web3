@@ -4,7 +4,7 @@ import { useMoralis, useWeb3Contract } from 'react-moralis';
 import DevMarketplaceAbi from '../../abis/DevMarketplace.json';
 import DevAbi from '../../abis/Dev.json';
 import { ethers } from 'ethers';
-import BuildTxUrl from '@/utils/buildtxurl';
+import { BuildTxUrl } from '@/utils/buildtxurl';
 
 const MORALIS_API_KEY = process.env.NEXT_PUBLIC_MORALIS_API_KEY ?? '';
 const marketplaceContract = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT ?? '';
